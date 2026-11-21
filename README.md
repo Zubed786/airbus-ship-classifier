@@ -53,6 +53,12 @@ The [500-image pilot on Kaggle](https://www.kaggle.com/code/mdzubed/airbus-ship-
 
 ConvNeXt V2 led in average precision and F1. DINOv3 found 20 of 22 positive images and produced 13 false positives. The small test set limits the precision of these estimates.
 
+### 15,000-image Kaggle benchmark
+
+The [private Kaggle GPU run](https://www.kaggle.com/code/mdzubed/airbus-ship-classifier-15000-image-benchmark) is submitted. It uses a stratified split of 9,000 training, 3,000 validation, and 3,000 held-out images. Each model runs for 10 epochs. The ConvNeXt V2 and DINOv3 backbones are frozen. The [Kaggle script](kaggle/benchmark.py) pins the training code revision and attaches to the competition dataset mounted by Kaggle.
+
+Metrics will be added once the run completes and the shared split is verified.
+
 ## References
 
 - [Original Stanford CS229 project](https://github.com/cs229ShipDetection/CS229project-Airbus-Ship-Detection)
