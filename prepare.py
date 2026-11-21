@@ -17,14 +17,14 @@ def prepare(labels_file, images, output, limit, seed):
             labels[name] = labels.get(name, False) or encoded not in {"", "nan"}
 
     rows = [(name, int(label)) for name, label in sorted(labels.items())]
-    missing = next((name for name, _ in rows if not (images / name).is_file()), None)
-    if missing:
-        raise FileNotFoundError(images / missing)
     if limit and limit < len(rows):
         rows, _ = train_test_split(
             rows, train_size=limit, stratify=[label for _, label in rows],
             random_state=seed,
         )
+    missing = next((name for name, _ in rows if not (images / name).is_file()), None)
+    if missing:
+        raise FileNotFoundError(images / missing)
     remaining, test = train_test_split(
         rows, test_size=0.2, stratify=[label for _, label in rows], random_state=seed,
     )
