@@ -1,0 +1,95 @@
+{
+  "model": "cnn",
+  "backbone": null,
+  "pretrained": false,
+  "frozen_backbone": false,
+  "best_epoch": 6,
+  "validation_f1_threshold": 0.3666754364967346,
+  "config": {
+    "images": "/kaggle/input/competitions/airbus-ship-detection/train_v2",
+    "split": "/kaggle/working/split.csv",
+    "output": "/kaggle/working/cnn",
+    "model": "cnn",
+    "epochs": 10,
+    "batch_size": 32,
+    "workers": 2,
+    "threads": 4,
+    "size": null,
+    "lr": 0.001,
+    "seed": 42,
+    "finetune": false,
+    "random_init": false
+  },
+  "split_sha256": "8c44a27fd3622f864c8d6d38638fdcc29c37b072dd1f6dbc097cfd9bd9d5d942",
+  "device": "cuda",
+  "test_size": 100,
+  "test_positives": 22,
+  "test_majority_accuracy": 0.78,
+  "test_accuracy": 0.77,
+  "test_average_precision": 0.5571842633113268,
+  "test_f1": 0.5660377358490566,
+  "test_precision": 0.4838709677419355,
+  "test_recall": 0.6818181818181818,
+  "test_confusion_matrix": [
+    [
+      62,
+      16
+    ],
+    [
+      7,
+      15
+    ]
+  ],
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 3.131363257567088,
+      "validation_average_precision": 0.36477504726534005
+    },
+    {
+      "epoch": 2,
+      "loss": 1.0976454877853394,
+      "validation_average_precision": 0.23802611200542834
+    },
+    {
+      "epoch": 3,
+      "loss": 0.6824144430955251,
+      "validation_average_precision": 0.49754804556895016
+    },
+    {
+      "epoch": 4,
+      "loss": 0.5103668800989787,
+      "validation_average_precision": 0.49209263403799713
+    },
+    {
+      "epoch": 5,
+      "loss": 0.4830366826057434,
+      "validation_average_precision": 0.5015277266481878
+    },
+    {
+      "epoch": 6,
+      "loss": 0.47126429080963134,
+      "validation_average_precision": 0.6363217698365883
+    },
+    {
+      "epoch": 7,
+      "loss": 0.4254314088821411,
+      "validation_average_precision": 0.5668464648904872
+    },
+    {
+      "epoch": 8,
+      "loss": 0.4531681493918101,
+      "validation_average_precision": 0.5225547216905887
+    },
+    {
+      "epoch": 9,
+      "loss": 0.4496760817368825,
+      "validation_average_precision": 0.4455974945193223
+    },
+    {
+      "epoch": 10,
+      "loss": 0.4354122964541117,
+      "validation_average_precision": 0.5624054015646835
+    }
+  ]
+}

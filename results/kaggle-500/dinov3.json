@@ -1,0 +1,95 @@
+{
+  "model": "dinov3",
+  "backbone": "vit_small_patch16_dinov3.lvd1689m",
+  "pretrained": true,
+  "frozen_backbone": true,
+  "best_epoch": 10,
+  "validation_f1_threshold": 0.21218614280223846,
+  "config": {
+    "images": "/kaggle/input/competitions/airbus-ship-detection/train_v2",
+    "split": "/kaggle/working/split.csv",
+    "output": "/kaggle/working/dinov3",
+    "model": "dinov3",
+    "epochs": 10,
+    "batch_size": 32,
+    "workers": 2,
+    "threads": 4,
+    "size": null,
+    "lr": 0.001,
+    "seed": 42,
+    "finetune": false,
+    "random_init": false
+  },
+  "split_sha256": "8c44a27fd3622f864c8d6d38638fdcc29c37b072dd1f6dbc097cfd9bd9d5d942",
+  "device": "cuda",
+  "test_size": 100,
+  "test_positives": 22,
+  "test_majority_accuracy": 0.78,
+  "test_accuracy": 0.85,
+  "test_average_precision": 0.7348943843680684,
+  "test_f1": 0.7272727272727273,
+  "test_precision": 0.6060606060606061,
+  "test_recall": 0.9090909090909091,
+  "test_confusion_matrix": [
+    [
+      65,
+      13
+    ],
+    [
+      2,
+      20
+    ]
+  ],
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.6155238707860311,
+      "validation_average_precision": 0.4913658775382119
+    },
+    {
+      "epoch": 2,
+      "loss": 0.5178177503744761,
+      "validation_average_precision": 0.5255720361761086
+    },
+    {
+      "epoch": 3,
+      "loss": 0.47929800748825074,
+      "validation_average_precision": 0.5908699993907366
+    },
+    {
+      "epoch": 4,
+      "loss": 0.46181884765625,
+      "validation_average_precision": 0.6216607141498537
+    },
+    {
+      "epoch": 5,
+      "loss": 0.44072961966196694,
+      "validation_average_precision": 0.6424582353908013
+    },
+    {
+      "epoch": 6,
+      "loss": 0.42136727094650267,
+      "validation_average_precision": 0.6560722394206268
+    },
+    {
+      "epoch": 7,
+      "loss": 0.4098986975351969,
+      "validation_average_precision": 0.6905940786574425
+    },
+    {
+      "epoch": 8,
+      "loss": 0.39787389636039733,
+      "validation_average_precision": 0.7161681979307203
+    },
+    {
+      "epoch": 9,
+      "loss": 0.3845598463217417,
+      "validation_average_precision": 0.7348742451150283
+    },
+    {
+      "epoch": 10,
+      "loss": 0.37502620617548627,
+      "validation_average_precision": 0.7546414594652102
+    }
+  ]
+}

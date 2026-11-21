@@ -43,7 +43,15 @@ Use `--images data/airbus/train_v2` when training on this subset.
 
 The original report lists 94% test accuracy for its simple CNN and 90% for the DenseNet-169 transfer baseline. Those figures come from its own split. This experiment measures changes against its four-layer CNN on the shared split. The split groups annotations by image ID and does not account for overlapping geographic coverage across image IDs.
 
-No Airbus benchmark results are available yet.
+The [500-image pilot on Kaggle](https://www.kaggle.com/code/mdzubed/airbus-ship-classifier-benchmark/versions) trained each model for 10 epochs on a Tesla T4. It used 300 training images, 100 validation images, and 100 held-out test images. There were 22 positives in the test split. Predicting the majority class would score 78% accuracy.
+
+| Model | Accuracy | Average precision | F1 | Precision | Recall |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| [Four-layer CNN](results/kaggle-500/cnn.json) | 77% | 0.557 | 0.566 | 0.484 | 0.682 |
+| [ConvNeXt V2 Atto](results/kaggle-500/convnextv2.json) | 93% | 0.900 | 0.837 | 0.857 | 0.818 |
+| [DINOv3 ViT-S/16](results/kaggle-500/dinov3.json) | 85% | 0.735 | 0.727 | 0.606 | 0.909 |
+
+ConvNeXt V2 led in average precision and F1. DINOv3 found 20 of 22 positive images and produced 13 false positives. The small test set limits the precision of these estimates.
 
 ## References
 
