@@ -1,0 +1,57 @@
+{
+  "split_sha256": "9bddf53c9b878e3b0d9161b820d882c0de96ed5a7658185ab2b8f1aa7a55dbc9",
+  "split_sizes": {
+    "train": 9000,
+    "val": 3000,
+    "test": 3000
+  },
+  "test_positives": 663,
+  "paper_cnn_epochs": 30,
+  "paper_cnn_best_epoch": 30,
+  "threshold_rule": "Maximize validation accuracy on 0.1 to 0.9 in steps of 0.1, ties nearest 0.5",
+  "metrics": {
+    "paper_cnn_reconstruction": {
+      "threshold": 0.5,
+      "accuracy": 0.912,
+      "average_precision": 0.8839729274034529,
+      "f1": 0.794392523364486,
+      "precision": 0.821256038647343,
+      "recall": 0.7692307692307693,
+      "specificity": 0.9525032092426188,
+      "confusion_matrix": [
+        [
+          2226,
+          111
+        ],
+        [
+          153,
+          510
+        ]
+      ]
+    },
+    "ensemble": {
+      "threshold": 0.4,
+      "accuracy": 0.9513333333333334,
+      "average_precision": 0.9589522004315859,
+      "f1": 0.8902255639097745,
+      "precision": 0.8875562218890555,
+      "recall": 0.8929110105580694,
+      "specificity": 0.9679075738125802,
+      "confusion_matrix": [
+        [
+          2262,
+          75
+        ],
+        [
+          71,
+          592
+        ]
+      ]
+    }
+  },
+  "paired_accuracy": {
+    "ensemble_only_correct": 173,
+    "cnn_only_correct": 55,
+    "mcnemar_exact_p": 2.11960151252341e-15
+  }
+}

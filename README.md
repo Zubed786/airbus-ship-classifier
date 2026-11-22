@@ -99,6 +99,19 @@ The ensemble had the highest accuracy, average precision, F1, and recall. ConvNe
 
 [Full metrics JSON](results/full-held-out.json)
 
+### Head-to-head with the reconstructed CS229 CNN
+
+The authors' original code was unavailable. The [reconstruction](kaggle/head_to_head.py) uses the described four-layer CNN, trained from scratch for 30 epochs. We reused the two pretrained checkpoints for the 50/50 ensemble. Both approaches used the same 9,000 training, 3,000 validation, and 3,000 test images. Both decision thresholds were selected by validation accuracy on the same grid.
+
+| Model | Accuracy | Average precision | F1 | Precision | Recall | Specificity |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Reconstructed CS229 simple CNN | 91.20% | 0.8840 | 0.7944 | 82.13% | 76.92% | 95.25% |
+| ConvNeXt V2 + DINOv3 ensemble | 95.13% | 0.9590 | 0.8902 | 88.76% | 89.29% | 96.79% |
+
+The ensemble got 118 more images right. It was correct on 173 images the reconstructed CNN missed, and the reconstructed CNN was correct on 55 images the ensemble missed. The exact paired McNemar p-value was 2.12e-15 for this split. The comparison applies to the CNN reconstruction and the saved ensemble, which uses pretrained backbones.
+
+[Metrics JSON](results/paper-head-to-head.json) · [Private Kaggle run](https://www.kaggle.com/code/mdzubed/airbus-ship-classifier-head-to-head)
+
 ## References
 
 - [Original Stanford CS229 project](https://github.com/cs229ShipDetection/CS229project-Airbus-Ship-Detection)
