@@ -1,0 +1,95 @@
+{
+  "model": "cnn",
+  "backbone": null,
+  "pretrained": false,
+  "frozen_backbone": false,
+  "best_epoch": 10,
+  "validation_f1_threshold": 0.3169419467449188,
+  "config": {
+    "images": "/kaggle/input/competitions/airbus-ship-detection/train_v2",
+    "split": "/kaggle/working/split.csv",
+    "output": "/kaggle/working/cnn",
+    "model": "cnn",
+    "epochs": 10,
+    "batch_size": 32,
+    "workers": 2,
+    "threads": 4,
+    "size": null,
+    "lr": 0.001,
+    "seed": 42,
+    "finetune": false,
+    "random_init": false
+  },
+  "split_sha256": "9bddf53c9b878e3b0d9161b820d882c0de96ed5a7658185ab2b8f1aa7a55dbc9",
+  "device": "cuda",
+  "test_size": 3000,
+  "test_positives": 663,
+  "test_majority_accuracy": 0.779,
+  "test_accuracy": 0.87,
+  "test_average_precision": 0.7979930178403333,
+  "test_f1": 0.7182080924855492,
+  "test_precision": 0.6893203883495146,
+  "test_recall": 0.7496229260935143,
+  "test_confusion_matrix": [
+    [
+      2113,
+      224
+    ],
+    [
+      166,
+      497
+    ]
+  ],
+  "history": [
+    {
+      "epoch": 1,
+      "loss": 0.591989751709832,
+      "validation_average_precision": 0.4605769591044024
+    },
+    {
+      "epoch": 2,
+      "loss": 0.44537166060341726,
+      "validation_average_precision": 0.4754895097735664
+    },
+    {
+      "epoch": 3,
+      "loss": 0.43759025536643137,
+      "validation_average_precision": 0.5573362543490019
+    },
+    {
+      "epoch": 4,
+      "loss": 0.428464819961124,
+      "validation_average_precision": 0.5027940453231388
+    },
+    {
+      "epoch": 5,
+      "loss": 0.42383157279756334,
+      "validation_average_precision": 0.47698381693149355
+    },
+    {
+      "epoch": 6,
+      "loss": 0.41617502318488225,
+      "validation_average_precision": 0.5094045680862296
+    },
+    {
+      "epoch": 7,
+      "loss": 0.40048586016231114,
+      "validation_average_precision": 0.5478338986574436
+    },
+    {
+      "epoch": 8,
+      "loss": 0.3921145641009013,
+      "validation_average_precision": 0.658390758889211
+    },
+    {
+      "epoch": 9,
+      "loss": 0.3534842225048277,
+      "validation_average_precision": 0.7064779113707713
+    },
+    {
+      "epoch": 10,
+      "loss": 0.3358330633044243,
+      "validation_average_precision": 0.7235225542910544
+    }
+  ]
+}

@@ -55,9 +55,17 @@ ConvNeXt V2 led in average precision and F1. DINOv3 found 20 of 22 positive imag
 
 ### 15,000-image Kaggle benchmark
 
-The [private Kaggle GPU run](https://www.kaggle.com/code/mdzubed/airbus-ship-classifier-15000-image-benchmark) is submitted. It uses a stratified split of 9,000 training, 3,000 validation, and 3,000 held-out images. Each model runs for 10 epochs. The ConvNeXt V2 and DINOv3 backbones are frozen. The [Kaggle script](kaggle/benchmark.py) pins the training code revision and attaches to the competition dataset mounted by Kaggle.
+The [private Kaggle GPU run](https://www.kaggle.com/code/mdzubed/airbus-ship-classifier-15000-image-benchmark) completed. It uses a stratified split of 9,000 training, 3,000 validation, and 3,000 held-out images. Each model runs for 10 epochs. The ConvNeXt V2 and DINOv3 backbones are frozen. The [Kaggle script](kaggle/benchmark.py) pins the training code revision and attaches to the competition dataset mounted by Kaggle.
 
-Metrics will be added once the run completes and the shared split is verified.
+The test split includes 663 positive images. Predicting the majority class would score 77.9% accuracy.
+
+| Model | Accuracy | Average precision | F1 | Precision | Recall |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| [Four-layer CNN](results/kaggle-15000/cnn.json) | 87.0% | 0.798 | 0.718 | 0.689 | 0.750 |
+| [ConvNeXt V2 Atto](results/kaggle-15000/convnextv2.json) | 94.3% | 0.946 | 0.871 | 0.866 | 0.876 |
+| [DINOv3 ViT-S/16](results/kaggle-15000/dinov3.json) | 94.1% | 0.950 | 0.872 | 0.835 | 0.911 |
+
+DINOv3 ViT-S/16 had the highest average precision (0.950). The CNN baseline scored 0.798 on the same split.
 
 ## References
 
