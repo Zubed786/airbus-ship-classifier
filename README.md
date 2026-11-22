@@ -85,7 +85,19 @@ The ensemble had the highest accuracy, average precision, F1, and recall on this
 
 The [private Kaggle GPU run](https://www.kaggle.com/code/mdzubed/airbus-ship-classifier-full-test) evaluates both saved models and their fixed 50/50 ensemble on 174,556 previously unused labeled images, including 38,578 ship-positive images. It excludes every image ID used in the 500-image pilot, the 15,000-image benchmark, or the earlier ensemble test. It reuses the earlier validation thresholds, and the checkpoints are unchanged.
 
-The [evaluation script](kaggle/ensemble.py) accepts `--all-unused` for this run. The first run stopped on a truncated JPEG. The retry enables Pillow recovery for truncated files and applies a shared exclusion mask to any images that still cannot be decoded. Results are pending.
+The [evaluation script](kaggle/ensemble.py) accepts `--all-unused` for this run. The first run stopped on a truncated JPEG. The retry enables Pillow recovery for truncated files and applies a shared exclusion mask to any images that still cannot be decoded.
+
+The retry completed on a Tesla T4. All 174,556 images were scored.
+
+| Model | Accuracy | Average precision | F1 | Precision | Recall |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ConvNeXt V2 Atto | 94.24% | 0.9391 | 0.8670 | 0.8847 | 0.8499 |
+| DINOv3 ViT-S/16 | 94.00% | 0.9452 | 0.8690 | 0.8402 | 0.8997 |
+| Equal-weight ensemble | 94.70% | 0.9545 | 0.8833 | 0.8602 | 0.9076 |
+
+The ensemble had the highest accuracy, average precision, F1, and recall. ConvNeXt V2 had the highest precision and produced 4,272 false positives versus 5,690 for the ensemble.
+
+[Full metrics JSON](results/full-held-out.json)
 
 ## References
 
