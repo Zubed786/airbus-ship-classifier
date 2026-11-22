@@ -81,6 +81,12 @@ The ensemble had the highest accuracy, average precision, F1, and recall on this
 
 [Evaluation script](kaggle/ensemble.py) · [Metrics JSON](results/ensemble-3000.json) · [Private Kaggle run](https://www.kaggle.com/code/mdzubed/airbus-ship-classifier-ensemble)
 
+### Full held-out evaluation
+
+The [private Kaggle GPU run](https://www.kaggle.com/code/mdzubed/airbus-ship-classifier-full-test) evaluates both saved models and their fixed 50/50 ensemble on 174,556 previously unused labeled images, including 38,578 ship-positive images. It excludes every image ID used in the 500-image pilot, the 15,000-image benchmark, or the earlier ensemble test. It reuses the earlier validation thresholds, and the checkpoints are unchanged.
+
+The [evaluation script](kaggle/ensemble.py) accepts `--all-unused` for this run. Results are pending.
+
 ## References
 
 - [Original Stanford CS229 project](https://github.com/cs229ShipDetection/CS229project-Airbus-Ship-Detection)

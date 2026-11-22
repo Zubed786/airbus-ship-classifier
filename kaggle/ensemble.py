@@ -1,4 +1,5 @@
 """Evaluate saved Kaggle checkpoints and a fixed equal-weight ensemble."""
+import argparse
 import csv
 import hashlib
 import json
@@ -23,14 +24,23 @@ OUTPUT = Path("/kaggle/working")
 REPO = Path("/tmp/airbus-ship-classifier")
 SOURCE = "airbus-ship-classifier-15000-image-benchmark"
 NAMES = ("convnextv2", "dinov3")
+PILOT_SOURCE = "airbus-ship-classifier-benchmark"
+ENSEMBLE_SOURCE = "airbus-ship-classifier-ensemble"
 
 
-def find_checkpoints():
-    roots = [INPUT / "notebooks/mdzubed" / SOURCE, INPUT / SOURCE, INPUT / "mdzubed" / SOURCE]
-    return next(root for root in roots if all((root / name / "best.pt").is_file() for name in NAMES))
+def find_output(source, filename="split.csv"):
+    roots = [INPUT / "notebooks/mdzubed" / source, INPUT / source, INPUT / "mdzubed" / source]
+    for root in roots:
+        if (root / filename).is_file():
+            return root
+    raise FileNotFoundError(f"No Kaggle output {filename} for {source}")
 
 
-def load_splits(root):
+def test_ids_digest(rows):
+    return hashlib.sha256("\n".join(row["image"] for row in rows).encode()).hexdigest()
+
+
+def load_splits(root, previous):
     original = (root / "split.csv").read_bytes()
     digest = hashlib.sha256(original).hexdigest()
     for name in NAMES:
@@ -51,6 +61,14 @@ def load_splits(root):
         stratify=[row["label"] for row in candidates],
     )
     validation = [row for row in rows if row["split"] == "val"]
+    if previous is not None:
+        if previous["source_split_sha256"] != digest or previous["fresh_test_ids_sha256"] != test_ids_digest(fresh):
+            raise ValueError("The earlier evaluation split could not be reproduced")
+        pilot_root = find_output(PILOT_SOURCE)
+        with (pilot_root / "split.csv").open(newline="") as stream:
+            used = {row["image"] for row in csv.DictReader(stream)}
+        used.update(row["image"] for row in fresh)
+        fresh = [row for row in candidates if row["image"] not in used]
     return validation, fresh, digest
 
 
@@ -74,11 +92,18 @@ def metrics_for(labels, scores, threshold):
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--all-unused", action="store_true")
+    args = parser.parse_args()
     if not torch.cuda.is_available():
         raise RuntimeError("A CUDA GPU is required")
     print(f"GPU: {torch.cuda.get_device_name()}", flush=True)
-    root = find_checkpoints()
-    validation, fresh, digest = load_splits(root)
+    root = find_output(SOURCE)
+    previous = None
+    if args.all_unused:
+        earlier = find_output(ENSEMBLE_SOURCE, "ensemble-metrics.json")
+        previous = json.loads((earlier / "ensemble-metrics.json").read_text())
+    validation, fresh, digest = load_splits(root, previous)
     print(f"Prepared {len(validation)} validation and {len(fresh)} fresh test images", flush=True)
     subprocess.run(["git", "clone", "https://github.com/Zubed786/airbus-ship-classifier.git", str(REPO)], check=True)
     subprocess.run(["git", "-C", str(REPO), "checkout", "--detach", "2ca89b5"], check=True)
@@ -96,11 +121,13 @@ def main():
             transforms.ToTensor(), transforms.Normalize(config["mean"], config["std"]),
         ])
         scores[name] = []
-        for rows in (validation, fresh):
+        partitions = [("test", fresh)] if previous else [("validation", validation), ("test", fresh)]
+        for partition, rows in partitions:
             loader = DataLoader(
                 Ships(rows, DATA / "train_v2", transform),
                 batch_size=32, num_workers=2, pin_memory=True, shuffle=False,
             )
+            print(f"Scoring {name} on {len(rows):,} {partition} images", flush=True)
             labels, predictions = evaluate(model, loader, "cuda")
             if labels != [float(row["label"]) for row in rows]:
                 raise ValueError("Predictions and labels are not aligned")
@@ -111,15 +138,19 @@ def main():
     validation_labels = [int(row["label"]) for row in validation]
     test_labels = [int(row["label"]) for row in fresh]
     results = {
+        "test_scope": "all-unused" if args.all_unused else "stratified-sample",
         "source_split_sha256": digest,
-        "fresh_test_ids_sha256": hashlib.sha256("\n".join(row["image"] for row in fresh).encode()).hexdigest(),
+        "fresh_test_ids_sha256": test_ids_digest(fresh),
         "validation_size": len(validation),
         "test_size": len(fresh),
         "test_positives": sum(test_labels),
         "ensemble_weights": dict.fromkeys(NAMES, 0.5),
         "metrics": {
-            name: metrics_for(test_labels, test, threshold_for(validation_labels, val))
-            for name, (val, test) in scores.items()
+            name: metrics_for(
+                test_labels, predictions[-1],
+                previous["metrics"][name]["threshold"] if previous else threshold_for(validation_labels, predictions[0]),
+            )
+            for name, predictions in scores.items()
         },
     }
     (OUTPUT / "ensemble-metrics.json").write_text(json.dumps(results, indent=2) + "\n")
