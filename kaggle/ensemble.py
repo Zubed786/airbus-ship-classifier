@@ -10,12 +10,13 @@ from pathlib import Path
 import numpy as np
 import timm
 import torch
+from PIL import Image, ImageFile
 from sklearn.metrics import (
     accuracy_score, average_precision_score, confusion_matrix, f1_score,
     precision_recall_curve, precision_score, recall_score,
 )
 from sklearn.model_selection import train_test_split
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
 
 INPUT = Path("/kaggle/input")
@@ -26,6 +27,26 @@ SOURCE = "airbus-ship-classifier-15000-image-benchmark"
 NAMES = ("convnextv2", "dinov3")
 PILOT_SOURCE = "airbus-ship-classifier-benchmark"
 ENSEMBLE_SOURCE = "airbus-ship-classifier-ensemble"
+
+
+class FullTestImages(Dataset):
+    def __init__(self, rows, folder, transform):
+        self.rows = rows
+        self.folder = folder
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.rows)
+
+    def __getitem__(self, index):
+        row = self.rows[index]
+        ImageFile.LOAD_TRUNCATED_IMAGES = True
+        try:
+            with Image.open(self.folder / row["image"]) as image:
+                rgb = image.convert("RGB")
+        except OSError:
+            return torch.zeros((3, 224, 224)), -1.0
+        return self.transform(rgb), float(row["label"])
 
 
 def find_output(source, filename="split.csv"):
@@ -111,6 +132,7 @@ def main():
     from train import BACKBONES, Ships, evaluate
 
     scores = {}
+    test_valid = np.ones(len(fresh), dtype=bool)
     for name in NAMES:
         model = timm.create_model(BACKBONES[name], pretrained=False, num_classes=1)
         config = timm.data.resolve_model_data_config(model)
@@ -123,31 +145,42 @@ def main():
         scores[name] = []
         partitions = [("test", fresh)] if previous else [("validation", validation), ("test", fresh)]
         for partition, rows in partitions:
+            dataset_type = FullTestImages if args.all_unused else Ships
             loader = DataLoader(
-                Ships(rows, DATA / "train_v2", transform),
+                dataset_type(rows, DATA / "train_v2", transform),
                 batch_size=32, num_workers=2, pin_memory=True, shuffle=False,
             )
             print(f"Scoring {name} on {len(rows):,} {partition} images", flush=True)
             labels, predictions = evaluate(model, loader, "cuda")
-            if labels != [float(row["label"]) for row in rows]:
+            expected = np.asarray([float(row["label"]) for row in rows])
+            observed = np.asarray(labels)
+            valid = observed != -1
+            if len(observed) != len(expected) or not np.array_equal(observed[valid], expected[valid]):
                 raise ValueError("Predictions and labels are not aligned")
+            if partition == "test":
+                test_valid &= valid
             scores[name].append(np.asarray(predictions))
         print(f"Scored {name}", flush=True)
 
     scores["ensemble"] = np.mean([scores[name] for name in NAMES], axis=0)
     validation_labels = [int(row["label"]) for row in validation]
-    test_labels = [int(row["label"]) for row in fresh]
+    test_labels = np.asarray([int(row["label"]) for row in fresh])[test_valid].tolist()
     results = {
         "test_scope": "all-unused" if args.all_unused else "stratified-sample",
         "source_split_sha256": digest,
         "fresh_test_ids_sha256": test_ids_digest(fresh),
         "validation_size": len(validation),
-        "test_size": len(fresh),
+        "requested_test_size": len(fresh),
+        "test_size": len(test_labels),
+        "excluded_undecodable_images": int((~test_valid).sum()),
+        "evaluated_test_ids_sha256": test_ids_digest(
+            row for row, valid in zip(fresh, test_valid) if valid
+        ),
         "test_positives": sum(test_labels),
         "ensemble_weights": dict.fromkeys(NAMES, 0.5),
         "metrics": {
             name: metrics_for(
-                test_labels, predictions[-1],
+                test_labels, predictions[-1][test_valid],
                 previous["metrics"][name]["threshold"] if previous else threshold_for(validation_labels, predictions[0]),
             )
             for name, predictions in scores.items()
