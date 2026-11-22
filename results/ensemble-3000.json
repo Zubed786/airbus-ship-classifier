@@ -1,0 +1,67 @@
+{
+  "source_split_sha256": "9bddf53c9b878e3b0d9161b820d882c0de96ed5a7658185ab2b8f1aa7a55dbc9",
+  "fresh_test_ids_sha256": "6c6c28184996e6ce2d96e6980c2fbef6d84fb7968442c5763339b81c860135fe",
+  "validation_size": 3000,
+  "test_size": 3000,
+  "test_positives": 663,
+  "ensemble_weights": {
+    "convnextv2": 0.5,
+    "dinov3": 0.5
+  },
+  "metrics": {
+    "convnextv2": {
+      "threshold": 0.48320361971855164,
+      "accuracy": 0.946,
+      "average_precision": 0.9430760116834321,
+      "f1": 0.8763358778625954,
+      "precision": 0.8871715610510046,
+      "recall": 0.8657616892911011,
+      "confusion_matrix": [
+        [
+          2264,
+          73
+        ],
+        [
+          89,
+          574
+        ]
+      ]
+    },
+    "dinov3": {
+      "threshold": 0.26518958806991577,
+      "accuracy": 0.9456666666666667,
+      "average_precision": 0.9490397475820953,
+      "f1": 0.880760790051207,
+      "precision": 0.8551136363636364,
+      "recall": 0.9079939668174962,
+      "confusion_matrix": [
+        [
+          2235,
+          102
+        ],
+        [
+          61,
+          602
+        ]
+      ]
+    },
+    "ensemble": {
+      "threshold": 0.32715386897325516,
+      "accuracy": 0.951,
+      "average_precision": 0.9558576425268109,
+      "f1": 0.8915129151291513,
+      "precision": 0.8728323699421965,
+      "recall": 0.9110105580693816,
+      "confusion_matrix": [
+        [
+          2249,
+          88
+        ],
+        [
+          59,
+          604
+        ]
+      ]
+    }
+  }
+}

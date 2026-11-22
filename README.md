@@ -67,6 +67,20 @@ The test split includes 663 positive images. Predicting the majority class would
 
 DINOv3 ViT-S/16 had the highest average precision (0.950). The CNN baseline scored 0.798 on the same split.
 
+### ConvNeXt V2 and DINOv3 ensemble
+
+The ensemble averages the two saved models' ship probabilities with equal weights. Each individual model and the ensemble chose its threshold by F1 on the original 3,000 validation images. The comparison below uses the same fresh 3,000-image test sample for all three, excluding every image in the original 15,000-image split by image ID. The test sample has 663 positives.
+
+| Model | Accuracy | Average precision | F1 | Precision | Recall |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| ConvNeXt V2 Atto | 94.60% | 0.9431 | 0.8763 | 0.8872 | 0.8658 |
+| DINOv3 ViT-S/16 | 94.57% | 0.9490 | 0.8808 | 0.8551 | 0.9080 |
+| Equal-weight ensemble | 95.10% | 0.9559 | 0.8915 | 0.8728 | 0.9110 |
+
+The ensemble had the highest accuracy, average precision, F1, and recall on this sample. ConvNeXt V2 had the highest precision and produced 73 false positives versus 88 for the ensemble. Ensemble inference requires both backbones.
+
+[Evaluation script](kaggle/ensemble.py) · [Metrics JSON](results/ensemble-3000.json) · [Private Kaggle run](https://www.kaggle.com/code/mdzubed/airbus-ship-classifier-ensemble)
+
 ## References
 
 - [Original Stanford CS229 project](https://github.com/cs229ShipDetection/CS229project-Airbus-Ship-Detection)
